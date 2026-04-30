@@ -1,8 +1,8 @@
 <template>
   <div class="max-w-3xl mx-auto p-6" v-if="pokemon">
-    <button @click="$router.back()" class="mb-4 text-blue-600 hover:underline font-semibold">
+    <NuxtLink to="/" class="mb-4 text-blue-600 hover:underline font-semibold">
       &larr; Back to List
-    </button>
+    </NuxtLink>
     
     <div class="bg-white rounded-lg shadow-lg p-8">
       <!-- header info -->
@@ -42,19 +42,27 @@
       <div class="py-6 border-b">
         <h3 class="text-lg font-bold mb-4">Base Stats</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div v-for="stat in pokemon.stats" :key="stat.stat.name" class="flex justify-between items-center bg-gray-50 p-2 rounded">
-            <span class="capitalize font-medium text-gray-700">
-              <!-- clean up names like "special-attack" -->
-              {{ stat.stat.name.replace('-', ' ') }}
-            </span>
-            <span class="font-bold">{{ stat.base_stat }}</span>
-          </div>
+          <!-- stat bar example -->
+            <div class="space-y-3">
+            <div v-for="stat in pokemon.stats" :key="stat.stat.name">
+                <div class="flex justify-between text-xs mb-1 uppercase font-bold text-gray-600">
+                <span>{{ stat.stat.name.replace('-', ' ') }}</span>
+                <span>{{ stat.base_stat }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2">
+                <div 
+                    class="bg-blue-500 h-2 rounded-full transition-all duration-1000" 
+                    :style="{ width: `${(stat.base_stat / 255) * 100}%` }"
+                ></div>
+                </div>
+            </div>
+            </div>
         </div>
       </div>
 
       <!-- moves -->
       <div class="py-6 border-b">
-      <h3 class="text-lg font-bold mb-4">Moves (Top 10)</h3>
+      <h3 class="text-lg font-bold mb-4">Top 10 Moves</h3>
       <div class="flex flex-wrap gap-2">
           <span 
           v-for="move in pokemonMoves" 
