@@ -36,61 +36,37 @@
     </div>
 
     <!-- Load More Pagination -->
-    <div class="mt-10 flex justify-center">
+    <div class="mt-10 flex justify-center pb-10">
       <button 
-        @click="loadMore" 
-        :disabled="isLoading"
+        @click="store.fetchPokemons" 
+        :disabled="store.isLoading || !store.hasMore"
         class="bg-blue-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
       >
-        {{ isLoading ? 'Loading...' : 'Load More' }}
+        {{ store.isLoading ? 'Loading...' : 'Load More' }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { usePokemon } from '~/composables/getPokemon'
+import { usePokemonStore } from '~/stores/pokemon'
 
-// auto-imported composable functions
 const { formatId, getImageUrl } = usePokemon()
 
-const pokemonList = ref([])
-const offset = ref(0)
-const limit = 10 // initial load of 10
-const isLoading = ref(false)
 const searchQuery = ref('')
 const sortBy = ref('id-asc')
+const store = usePokemonStore()
 
-const fetchPokemons = async () => {
-  isLoading.value = true
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset.value}`)
-    const data = await res.json()
-
-    const detailedPromises = data.results.map(async (item) => {
-      const detailRes = await fetch(item.url)
-      const detailData = await detailRes.json()
-      
-      return {
-        id: detailData.id,
-        name: detailData.name,
-        types: detailData.types.map(t => t.type.name)
-      }
-    })
-
-    const newPokemons = await Promise.all(detailedPromises)
-    pokemonList.value.push(...newPokemons)
-    
-  } catch (error) {
-    console.error("error fetching pokemon:", error)
-  } finally {
-    isLoading.value = false
+onMounted(() => {
+  if (store.pokemonList.length === 0) {
+    store.fetchPokemons()
   }
-}
+})
 
 const displayList = computed(() => {
-  let list = pokemonList.value
+  let list = store.pokemonList
 
   // filtering
   if (searchQuery.value) {
@@ -107,17 +83,7 @@ const displayList = computed(() => {
     if (sortBy.value === 'name-asc') return a.name.localeCompare(b.name) 
     if (sortBy.value === 'name-desc') return b.name.localeCompare(a.name) 
     if (sortBy.value === 'id-desc') return b.id - a.id 
-    return a.id - b.id // id is ascending as default
+    return a.id - b.id 
   })
-})
-
-const loadMore = () => {
-  offset.value += limit
-  fetchPokemons()
-}
-
-// load initial 10 on page mount
-onMounted(() => {
-  fetchPokemons()
 })
 </script>
