@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 
-// In-update ko yung interface para string[] na ulit ang types
 interface Pokemon {
   id: number
   name: string
@@ -26,7 +25,6 @@ export const usePokemonStore = defineStore('pokemon', {
       try {
         const response: any = await $fetch(`https://pokeapi.co/api/v2/pokemon?limit=${this.limit}&offset=${this.offset}`)
         
-        // I-map natin yung data para malinis yung papasok sa state
         const details = await Promise.all(
           response.results.map(async (p: any) => {
             const rawData: any = await $fetch(p.url)

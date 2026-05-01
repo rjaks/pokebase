@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto p-6">
     <h1 class="text-3xl font-bold text-center mb-8">Pokedex</h1>
 
-    <!-- Controls -->
+    <!-- controls -->
     <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-between items-center">
     <input 
         v-model="searchQuery" 
@@ -22,7 +22,7 @@
     </select>
     </div>
 
-    <!-- Pokemon Grid -->
+    <!-- pokemon grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
       <PokemonCard
         v-for="poke in displayList"
@@ -35,7 +35,7 @@
       />
     </div>
 
-    <!-- Load More Pagination -->
+    <!-- load more -->
     <div class="mt-10 flex justify-center pb-10">
       <button 
         @click="store.fetchPokemons" 
