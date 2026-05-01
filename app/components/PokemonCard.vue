@@ -83,7 +83,7 @@ const mainColor = computed(() => {
 }
 
 .group:hover .pokeball-pattern {
-  opacity: 0.04; 
+  opacity: 0.1; 
   animation: slide-bg 3s linear infinite;
 }
 
