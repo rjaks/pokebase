@@ -5,7 +5,7 @@ export const typeIcons: Record<string, string> = {
   electric: 'ph:lightning-fill',
   grass: 'ph:leaf-fill',
   ice: 'ph:snowflake-fill',
-  fighting: 'fa6:solid-hand-fist',
+  fighting: 'mdi:boxing-glove',
   poison: 'ph:skull-fill',
   ground: 'ph:mountains-fill',
   flying: 'ph:wind-fill',

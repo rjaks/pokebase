@@ -10,7 +10,7 @@
     <div class="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 lg:p-12 h-full">
 
       <!-- left column for details -->
-      <div class="lg:col-span-7 flex flex-col justify-center space-y-6 h-full py-10 lg:py-0 overflow-y-auto no-scrollbar">
+      <div class="lg:col-span-7 flex flex-col justify-start space-y-6 h-full pt-12 pb-12 overflow-y-auto no-scrollbar">
         
         <div class="flex flex-wrap items-center gap-4">
           <h1 class="text-5xl lg:text-6xl font-black capitalize transition-colors duration-500 drop-shadow-sm leading-normal py-2" :style="{ color: mainColor }">
