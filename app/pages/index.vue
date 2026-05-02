@@ -53,9 +53,16 @@
           </p>
         </div>
         
-        <!-- Slideshow area -->
-        <div class="relative z-10 w-56 h-56 sm:w-80 sm:h-80 flex-shrink-0 scale-110 lg:scale-125">
-          <transition-group name="slide-fade" tag="div" class="w-full h-full relative">
+        <!-- Animated Intro Section with Glow -->
+        <div class="relative w-56 h-56 sm:w-80 sm:h-80 flex-shrink-0 scale-110 lg:scale-125 z-10 flex items-center justify-center">
+          
+          <!-- Glowing Orbs Background -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="absolute w-40 h-40 sm:w-60 sm:h-60 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+            <div class="absolute w-40 h-40 sm:w-60 sm:h-60 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-2000 translate-x-10"></div>
+          </div>
+
+          <transition-group name="slide-fade" tag="div" class="w-full h-full relative z-10">
             <img 
               v-for="(id, index) in randomIds"
               :key="id"
@@ -94,6 +101,21 @@
         </select>
       </div>
 
+      <!-- Top Load More Button (Shows when reversed) -->
+      <div v-if="isReversedSort" class="mb-8 flex justify-center pt-4">
+        <button 
+          @click="handleLoadMore" 
+          :disabled="store.isLoading || !store.hasMore"
+          class="flex items-center justify-center gap-3 w-56 h-12 bg-gray-800 text-white font-bold rounded-xl shadow-lg hover:bg-gray-700 hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 transition-all duration-300"
+        >
+          <div v-if="store.isLoading" class="w-5 h-5 rounded-full border-[2px] border-white relative overflow-hidden animate-spin">
+             <div class="absolute top-0 w-full h-1/2 bg-red-500 border-b-[2px] border-white"></div>
+             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-white border-[1.5px] border-white rounded-full z-10"></div>
+          </div>
+          <span v-else>Load More Pokemon</span>
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 -mt-4">
         <PokemonCard
           v-for="(poke, index) in displayList"
@@ -108,7 +130,8 @@
         />
       </div>
 
-      <div class="mt-12 flex justify-center pb-8">
+      <!-- Bottom Load More Button (Shows when normal sort) -->
+      <div v-if="!isReversedSort" class="mt-12 flex justify-center pb-8">
         <button 
           @click="handleLoadMore" 
           :disabled="store.isLoading || !store.hasMore"
@@ -155,13 +178,17 @@ const searchQuery = ref('')
 const sortBy = ref('id-asc')
 const store = usePokemonStore()
 
-// states para sa slideshow
 const randomIds = ref([])
 const currentSlide = ref(0)
 let slideInterval
 
 const isScrolled = ref(false)
 const showToTop = ref(false)
+
+// Check kung descending ang sort
+const isReversedSort = computed(() => {
+  return ['id-desc', 'name-desc'].includes(sortBy.value)
+})
 
 const checkScroll = () => {
   isScrolled.value = window.scrollY > 300
@@ -174,18 +201,20 @@ const scrollToTop = () => {
 
 const handleLoadMore = async () => {
   await store.fetchPokemons()
+  
   setTimeout(() => {
-    window.scrollBy({ top: 400, behavior: 'smooth' })
+    // kung nakabaligtad yung list, wag mag-scroll pababa
+    if (!isReversedSort.value) {
+      window.scrollBy({ top: 400, behavior: 'smooth' })
+    }
   }, 100)
 }
 
 onMounted(() => {
-  // mag-generate ng 5 random IDs
   for(let i = 0; i < 5; i++) {
     randomIds.value.push(Math.floor(Math.random() * 1010) + 1)
   }
 
-  // palit image every 3 seconds
   slideInterval = setInterval(() => {
     currentSlide.value = (currentSlide.value + 1) % randomIds.value.length
   }, 3000)
@@ -243,13 +272,21 @@ const displayList = computed(() => {
   animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* transition classes para sa slideshow */
+/* slide-fade animation para sa intro slideshow */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
-  transition: opacity 0.8s ease;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.slide-fade-enter-from,
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(30px) scale(0.9);
+}
 .slide-fade-leave-to {
   opacity: 0;
+  transform: translateX(-30px) scale(0.9);
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 </style>
