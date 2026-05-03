@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   safelist: [
     'bg-[#A8A77A]', 'bg-[#EE8130]', 'bg-[#6390F0]', 'bg-[#F7D02C]',
     'bg-[#7AC74C]', 'bg-[#96D9D6]', 'bg-[#C22E28]', 'bg-[#A33EA1]',
