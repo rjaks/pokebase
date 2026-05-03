@@ -250,27 +250,36 @@ const isScrolled = ref(false)
 const showToTop = ref(false)
 
 const globalSearchHit = ref(null)
+let searchTimeout = null
 
 watch(searchQuery, async (newVal) => {
+  clearTimeout(searchTimeout)
   const query = newVal.toLowerCase().trim()
   if (!query) {
     globalSearchHit.value = null
     return
   }
 
-  // Only trigger API if it's somewhat specific to avoid spamming
-  if (query.length > 2 || !isNaN(query)) {
-    try {
-      const rawData = await $fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
-      globalSearchHit.value = {
-        id: rawData.id,
-        name: rawData.name,
-        types: rawData.types.map(t => t.type.name)
+  // wait for 500ms before fetching again
+  searchTimeout = setTimeout(async () => {
+    // Only trigger API if it's somewhat specific to avoid spamming
+    if (query.length > 2 || !isNaN(query)) {
+      try {
+        const rawData = await $fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
+        if (searchQuery.value.toLowerCase().trim() === query) {
+          globalSearchHit.value = {
+            id: rawData.id,
+            name: rawData.name,
+            types: rawData.types.map(t => t.type.name)
+          }
+        }
+      } catch (e) {
+        if (searchQuery.value.toLowerCase().trim() === query) {
+          globalSearchHit.value = null // not found in API yet (or partial word)
+        }
       }
-    } catch (e) {
-      globalSearchHit.value = null // Not found in API yet (or partial word)
     }
-  }
+  }, 500)
 })
 
 const checkScroll = () => {
