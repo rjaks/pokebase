@@ -131,7 +131,6 @@
 
       <div 
         class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 mb-6 sm:mb-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-center transition-all duration-500 ease-in-out"
-        :class="isScrolled ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 pointer-events-auto'"
       >
         <div class="relative w-full sm:w-1/2">
           <input 
@@ -207,7 +206,6 @@
       </div>
 
       <div class="max-w-7xl mx-auto flex flex-col items-center relative z-10 gap-2 sm:gap-3">
-        <!-- spinning pokeball -->
         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[3px] border-gray-800 overflow-hidden bg-white relative animate-spin mb-1">
           <div class="absolute top-0 left-0 right-0 h-1/2 bg-red-500 border-b-[3px] border-gray-800"></div>
           <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-white border-[2.5px] sm:border-[3px] border-gray-800 rounded-full z-10"></div>
@@ -232,7 +230,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
 import { usePokemon } from '~/composables/getPokemon'
 import { usePokemonStore } from '~/stores/pokemon'
 import { useTheme } from '~/composables/useTheme'
@@ -250,6 +248,30 @@ let slideInterval
 
 const isScrolled = ref(false)
 const showToTop = ref(false)
+
+const globalSearchHit = ref(null)
+
+watch(searchQuery, async (newVal) => {
+  const query = newVal.toLowerCase().trim()
+  if (!query) {
+    globalSearchHit.value = null
+    return
+  }
+
+  // Only trigger API if it's somewhat specific to avoid spamming
+  if (query.length > 2 || !isNaN(query)) {
+    try {
+      const rawData = await $fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
+      globalSearchHit.value = {
+        id: rawData.id,
+        name: rawData.name,
+        types: rawData.types.map(t => t.type.name)
+      }
+    } catch (e) {
+      globalSearchHit.value = null // Not found in API yet (or partial word)
+    }
+  }
+})
 
 const checkScroll = () => {
   isScrolled.value = window.scrollY > 300
@@ -304,11 +326,20 @@ const displayList = computed(() => {
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    list = list.filter(poke => 
+    let filtered = list.filter(poke => 
       poke.name.toLowerCase().includes(query) || 
       poke.id.toString().includes(query) ||
       formatId(poke.id).includes(query)
     )
+
+    if (globalSearchHit.value) {
+      const isAlreadyLocal = filtered.some(p => p.id === globalSearchHit.value.id)
+      if (!isAlreadyLocal) {
+        filtered.push(globalSearchHit.value)
+      }
+    }
+
+    list = filtered
   }
 
   return [...list].sort((a, b) => {
