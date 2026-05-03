@@ -3,12 +3,11 @@
     
     <div class="pokeball-pattern absolute inset-0 z-0"></div>
 
-    <!-- Invisible Scroll Trigger -->
     <div ref="scrollTrigger" class="absolute top-20 w-full h-1 z-0"></div>
 
-    <!-- Top Navigation Bar (Static) -->
+    <!-- top navbar -->
     <div class="absolute top-4 sm:top-6 w-full px-4 sm:px-6 flex justify-between items-center z-40 pointer-events-none">
-      <NuxtLink to="/" class="pointer-events-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 font-bold text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all text-xs sm:text-base">
+      <NuxtLink to="/" class="pointer-events-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 font-bold text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all text-xs sm:text-base focus:outline-none">
         &larr; <span class="hidden sm:inline">Back</span>
       </NuxtLink>
 
@@ -16,14 +15,24 @@
         <NuxtLink 
           v-if="currentId > 1" 
           :to="`/pokemon/${currentId - 1}`" 
-          class="px-3 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 font-bold text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all text-xs sm:text-base"
+          class="px-3 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 font-bold text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all text-xs sm:text-base focus:outline-none"
         >
           &larr; <span class="hidden sm:inline">Prev</span>
         </NuxtLink>
 
+        <!-- sticky name popup inbetween next and prev for desktop -->
+        <div 
+          class="hidden lg:flex bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 items-center justify-center overflow-hidden transition-all duration-300"
+          :class="isScrolledDesktop && pokemon && !showSkeleton ? 'max-w-[200px] opacity-100 px-5 py-2.5 mx-1' : 'max-w-0 opacity-0 border-transparent m-0'"
+        >
+          <span class="font-black capitalize whitespace-nowrap transition-colors duration-500 text-base" :style="{ color: displayNameColor }">
+            {{ pokemon?.name }}
+          </span>
+        </div>
+
         <NuxtLink 
           :to="`/pokemon/${currentId + 1}`" 
-          class="px-3 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 font-bold text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all text-xs sm:text-base"
+          class="px-3 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 font-bold text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all text-xs sm:text-base focus:outline-none"
         >
           <span class="hidden sm:inline">Next</span> &rarr;
         </NuxtLink>
@@ -31,7 +40,7 @@
 
       <div class="pointer-events-auto">
         <ClientOnly>
-          <button @click.prevent="toggleDark" type="button" class="p-2 sm:p-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all flex items-center justify-center">
+          <button @click.prevent="toggleDark" type="button" class="p-2 sm:p-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:-translate-y-1 transition-all flex items-center justify-center focus:outline-none">
             <Icon v-if="isDark" name="mdi:weather-night" class="text-lg sm:text-xl" />
             <Icon v-else name="mdi:weather-sunny" class="text-lg sm:text-xl" />
           </button>
@@ -39,12 +48,12 @@
       </div>
     </div>
 
-    <!-- Floating Navigation Bar (Sticky when Scrolled) -->
+    <!-- floating navbar for mobile -->
     <div 
       class="fixed top-0 left-0 w-full px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-50 transition-all duration-300 flex justify-between items-center lg:hidden"
-      :class="isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'"
+      :class="isScrolledMobile ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'"
     >
-      <NuxtLink to="/" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200">
+      <NuxtLink to="/" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none">
         <Icon name="mdi:arrow-left" class="text-xl" />
       </NuxtLink>
 
@@ -53,10 +62,10 @@
       </div>
 
       <div class="flex gap-2">
-        <NuxtLink v-if="currentId > 1" :to="`/pokemon/${currentId - 1}`" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200">
+        <NuxtLink v-if="currentId > 1" :to="`/pokemon/${currentId - 1}`" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none">
           <Icon name="mdi:chevron-left" class="text-xl" />
         </NuxtLink>
-        <NuxtLink :to="`/pokemon/${currentId + 1}`" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200">
+        <NuxtLink :to="`/pokemon/${currentId + 1}`" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none">
           <Icon name="mdi:chevron-right" class="text-xl" />
         </NuxtLink>
       </div>
@@ -64,7 +73,7 @@
 
     <Transition name="poke-fade" mode="out-in">
       
-      <!-- SKELETON LOADER -->
+      <!-- skeleton loader / placeholder -->
       <div v-if="showSkeleton" :key="'skeleton-' + currentId" class="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-12 gap-8 p-4 sm:p-6 lg:p-12 h-full mt-20 lg:mt-0 animate-pulse">
         <div class="lg:col-span-5 lg:col-start-8 flex items-center justify-center pt-8 lg:pt-0">
           <div class="w-48 h-48 sm:w-64 sm:h-64 bg-gray-200 dark:bg-gray-800 rounded-full"></div>
@@ -76,10 +85,10 @@
         </div>
       </div>
 
-      <!-- MAIN CONTENT -->
+      <!-- main content -->
       <div v-else-if="pokemon" :key="'content-' + currentId" class="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 p-4 sm:p-6 lg:p-12 h-full mt-16 sm:mt-20 lg:mt-0">
 
-        <!-- Image Column -->
+        <!-- image -->
         <div class="lg:col-span-5 lg:col-start-8 flex flex-col items-center justify-center relative min-h-[30vh] sm:min-h-[40vh] lg:min-h-0 animate-slide-in-right pt-6 lg:pt-0" style="animation-delay: 150ms;">
           <div class="floating-pokemon w-full max-w-[200px] sm:max-w-xs lg:max-w-lg z-10">
             <img 
@@ -89,10 +98,10 @@
           </div>
         </div>
 
-        <!-- Details Column -->
+        <!-- details -->
         <div @scroll="handleScroll" class="lg:col-span-7 lg:col-start-1 lg:row-start-1 flex flex-col items-center lg:items-start space-y-4 sm:space-y-6 h-full pb-12 lg:overflow-y-auto no-scrollbar text-center lg:text-left">
           
-          <!-- Headers -->
+          <!-- header -->
           <div class="flex flex-col items-center lg:items-start gap-1 animate-slide-in-left w-full" style="animation-delay: 50ms;">
             <span class="text-[10px] sm:text-xs font-bold text-gray-400 tracking-widest uppercase">
               {{ category }}
@@ -125,12 +134,12 @@
             </div>
           </div>
 
-          <!-- Description -->
+          <!-- randomized desc -->
           <p class="text-sm sm:text-lg text-gray-600 dark:text-gray-300 font-medium italic bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-4 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm border border-white dark:border-gray-700 animate-slide-in-left transition-colors text-center lg:text-left" style="animation-delay: 100ms;">
             "{{ description }}"
           </p>
 
-          <!-- Stats -->
+          <!-- stats -->
           <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 animate-slide-in-left transition-colors w-full" style="animation-delay: 150ms;">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-3 sm:gap-y-4">
               <div v-for="stat in pokemon.stats" :key="stat.stat.name" class="flex items-center gap-2 sm:gap-3">
@@ -148,7 +157,7 @@
             </div>
           </div>
 
-          <!-- Types & Weaknesses -->
+          <!-- types & weaknesses -->
           <div class="flex flex-col sm:flex-row flex-wrap items-center lg:items-start justify-center lg:justify-start gap-4 sm:gap-10 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 animate-slide-in-left transition-colors w-full" style="animation-delay: 200ms;">
             <div class="flex flex-col items-center lg:items-start">
               <h3 class="text-[9px] sm:text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-2 sm:mb-3">Types</h3>
@@ -156,10 +165,13 @@
                 <div 
                   v-for="t in pokemonTypes" 
                   :key="t" 
-                  class="group relative cursor-help w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md text-white transition-transform hover:-translate-y-1" 
+                  class="group relative cursor-help w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md text-white transition-transform hover:-translate-y-1 active:-translate-y-1" 
                   :style="{ backgroundColor: getTypeHex(t) }"
                 >
                   <Icon :name="getTypeIcon(t)" class="text-base sm:text-xl" />
+                  <span class="absolute -bottom-8 bg-gray-800 dark:bg-gray-700 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity whitespace-nowrap capitalize z-50 pointer-events-none shadow-sm border border-gray-600">
+                    {{ t }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -170,16 +182,19 @@
                 <div 
                   v-for="w in pokemonWeaknesses" 
                   :key="w" 
-                  class="group relative cursor-help w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md text-white transition-transform hover:-translate-y-1" 
+                  class="group relative cursor-help w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md text-white transition-transform hover:-translate-y-1 active:-translate-y-1" 
                   :style="{ backgroundColor: getTypeHex(w) }"
                 >
                   <Icon :name="getTypeIcon(w)" class="text-base sm:text-xl" />
+                  <span class="absolute -bottom-8 bg-gray-800 dark:bg-gray-700 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity whitespace-nowrap capitalize z-50 pointer-events-none shadow-sm border border-gray-600">
+                    {{ w }}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Abilities & Moves Grouping -->
+          <!-- abilities & moves -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 animate-slide-in-left w-full" style="animation-delay: 250ms;">
             <div class="flex flex-col items-center lg:items-start">
               <h3 class="text-[9px] sm:text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-2 sm:mb-3">Abilities</h3>
@@ -216,7 +231,7 @@
             </div>
           </div>
 
-          <!-- Evolutions -->
+          <!-- evols -->
           <div class="mt-2 sm:mt-4 flex flex-col items-center lg:items-start w-full pb-6 sm:pb-10 animate-slide-in-left" style="animation-delay: 300ms;" v-if="evolutions.length > 1">
             <h3 class="text-[9px] sm:text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-3 sm:mb-4">Evolution Chain</h3>
             <div class="flex flex-wrap items-start justify-center lg:justify-start gap-1 sm:gap-2">
@@ -224,7 +239,7 @@
                 
                 <NuxtLink 
                   :to="`/pokemon/${evo.id}`" 
-                  class="flex flex-col items-center gap-2 sm:gap-3 group w-14 sm:w-20"
+                  class="flex flex-col items-center gap-2 sm:gap-3 group w-14 sm:w-20 focus:outline-none"
                 >
                   <div 
                     class="w-14 h-14 sm:w-20 sm:h-20 bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-sm border-[2px] transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-md"
@@ -266,28 +281,22 @@ import { usePokemon } from '~/composables/getPokemon'
 import { getWeaknesses } from '~/utils/weaknessMap'
 import { getTypeHex } from '~/utils/typeColors'
 import { getTypeIcon } from '~/utils/typeIcons'
+import { useTheme } from '~/composables/useTheme'
+import { getDarkColor, getLightColor } from '~/utils/colorUtils'
 
 const route = useRoute()
 const { formatId, getImageUrl } = usePokemon()
+const { isDark, toggleDark, initTheme } = useTheme()
 
 const currentId = computed(() => parseInt(route.params.id) || 1)
-const isScrolled = ref(false)
+const isScrolledMobile = ref(false)
+const isScrolledDesktop = ref(false)
 const isNavigating = ref(false)
-const isDark = ref(false)
 const scrollTrigger = ref(null)
 
-const toggleDark = () => {
-  isDark.value = !isDark.value
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
-}
-
+let observer = null
 onMounted(() => {
+  initTheme()
   if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     isDark.value = true
     document.documentElement.classList.add('dark')
@@ -296,31 +305,25 @@ onMounted(() => {
     document.documentElement.classList.remove('dark')
   }
 
-  // Setup intersection observer for mobile sticky nav
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      isScrolled.value = !entry.isIntersecting
-    },
+  observer = new IntersectionObserver(
+    ([entry]) => { isScrolledMobile.value = !entry.isIntersecting },
     { threshold: 0 }
   )
-
-  if (scrollTrigger.value) {
-    observer.observe(scrollTrigger.value)
-  }
-
-  onUnmounted(() => observer.disconnect())
+  if (scrollTrigger.value) observer.observe(scrollTrigger.value)
 })
 
+onUnmounted(() => observer?.disconnect())
+
 const handleScroll = (e) => {
-  // Fallback for desktop element scrolling
   if (e.target !== document) {
-    isScrolled.value = e.target.scrollTop > 120
+    isScrolledDesktop.value = e.target.scrollTop > 120
   }
 }
 
 watch(() => currentId.value, () => {
   isNavigating.value = true
-  isScrolled.value = false // Reset sticky nav on navigation
+  isScrolledMobile.value = false 
+  isScrolledDesktop.value = false
 })
 
 const { data: pokemon, pending: pendingPoke } = await useFetch(() => `https://pokeapi.co/api/v2/pokemon/${currentId.value}`, { lazy: true })
@@ -341,9 +344,13 @@ const { data: evolutionData } = await useFetch(evoUrl, { lazy: true })
 
 const pokemonAbilities = ref([])
 
+let abilitiesController = null
+
 watch(pokemon, async (newVal) => {
   pokemonAbilities.value = []
   if (!newVal) return
+
+  abilitiesController = new AbortController()
 
   const abilitiesData = await Promise.all(
     newVal.abilities.map(async (a) => {
@@ -384,37 +391,8 @@ const pokemonMoves = computed(() => pokemon.value?.moves.slice(0, 10).map(m => m
 const pokemonWeaknesses = computed(() => getWeaknesses(pokemonTypes.value))
 
 const mainColor = computed(() => pokemonTypes.value.length ? getTypeHex(pokemonTypes.value[0]) : '#e5e7eb')
-
-const darkColor = computed(() => {
-  if (mainColor.value === '#e5e7eb') return '#4b5563'
-  let hex = mainColor.value.replace('#', '')
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('')
-  
-  let r = parseInt(hex.substring(0, 2), 16)
-  let g = parseInt(hex.substring(2, 4), 16)
-  let b = parseInt(hex.substring(4, 6), 16)
-  
-  r = Math.floor(r * 0.65)
-  g = Math.floor(g * 0.65)
-  b = Math.floor(b * 0.65)
-  
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
-})
-
-const lightColor = computed(() => {
-  let hex = mainColor.value.replace('#', '')
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('')
-  
-  let r = parseInt(hex.substring(0, 2), 16)
-  let g = parseInt(hex.substring(2, 4), 16)
-  let b = parseInt(hex.substring(4, 6), 16)
-  
-  r = Math.floor(r + (255 - r) * 0.4)
-  g = Math.floor(g + (255 - g) * 0.4)
-  b = Math.floor(b + (255 - b) * 0.4)
-  
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
-})
+const darkColor = computed(() => getDarkColor(mainColor.value))
+const lightColor = computed(() => getLightColor(mainColor.value))
 
 const displayNameColor = computed(() => isDark.value ? lightColor.value : darkColor.value)
 

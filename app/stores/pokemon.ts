@@ -1,12 +1,22 @@
 import { defineStore } from 'pinia'
 
+interface PokemonListResponse {
+  results: { name: string; url: string }[]
+  next: string | null
+}
+
+interface PokemonStat {
+  base_stat: number
+  stat: { name: string }
+}
+
 interface Pokemon {
   id: number
   name: string
   height: number
   weight: number
-  types: string[] 
-  stats: { base_stat: number; stat: { name: string } }[]
+  types: string[]
+  stats: PokemonStat[]
 }
 
 export const usePokemonStore = defineStore('pokemon', {
@@ -21,13 +31,15 @@ export const usePokemonStore = defineStore('pokemon', {
     async fetchPokemons() {
       if (this.isLoading || !this.hasMore) return
       this.isLoading = true
-      
+
       try {
-        const response: any = await $fetch(`https://pokeapi.co/api/v2/pokemon?limit=${this.limit}&offset=${this.offset}`)
-        
+        const response = await $fetch<PokemonListResponse>(
+          `https://pokeapi.co/api/v2/pokemon?limit=${this.limit}&offset=${this.offset}`
+        )
+
         const details = await Promise.all(
-          response.results.map(async (p: any) => {
-            const rawData: any = await $fetch(p.url)
+          response.results.map(async (p) => {
+            const rawData = await $fetch<any>(p.url)
             return {
               id: rawData.id,
               name: rawData.name,
@@ -38,13 +50,10 @@ export const usePokemonStore = defineStore('pokemon', {
             } as Pokemon
           })
         )
-        
+
         this.pokemonList.push(...details)
         this.offset += this.limit
-        
-        if (response.results.length < this.limit) {
-          this.hasMore = false
-        }
+        this.hasMore = response.next !== null  // ← tamang check
       } catch (error) {
         console.error('API Error:', error)
       } finally {

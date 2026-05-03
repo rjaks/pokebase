@@ -6,7 +6,7 @@ export const typeWeaknesses: Record<string, string[]> = {
   ground: ['flying', 'bug', 'grass'],
   rock: ['fighting', 'ground', 'steel'],
   bug: ['fighting', 'flying', 'poison', 'ghost', 'steel', 'fire', 'fairy'],
-  ghost: ['norma', 'dark', 'ghost'],
+  ghost: ['normal', 'dark', 'ghost'],
   steel: ['steel', 'fire', 'water', 'electric'],
   fire: ['rock', 'fire', 'water', 'dragon'],
   water: ['water', 'grass', 'dragon'],
@@ -19,13 +19,11 @@ export const typeWeaknesses: Record<string, string[]> = {
   fairy: ['poison', 'steel', 'fire']
 }
 
-export const getWeaknesses = (types: string[]) => {
+export const getWeaknesses = (types: string[]): string[] => {
   const weaknesses = new Set<string>()
-  types.forEach(t => {
-    const typeName = t.toLowerCase()
-    if (typeWeaknesses[typeName]) {
-      typeWeaknesses[typeName].forEach(w => weaknesses.add(w))
-    }
+  types.forEach(type => {
+    const weakList = typeWeaknesses[type.toLowerCase()]
+    if (weakList) weakList.forEach(w => weaknesses.add(w))
   })
   return Array.from(weaknesses)
 }

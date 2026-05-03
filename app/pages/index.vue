@@ -2,17 +2,32 @@
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col relative transition-colors duration-500">
     <div class="fixed inset-0 z-0 pointer-events-none page-bg-dots"></div>
     
-    <header 
-      class="bg-red-700 dark:bg-gray-900 border-gray-900 dark:border-black sticky top-0 z-50 shadow-md flex items-center overflow-hidden transition-all duration-500 ease-in-out px-4 sm:px-6"
+     <header 
+      class="bg-white dark:bg-gray-900 border-red-600 dark:border-red-500 sticky top-0 z-50 shadow-sm sm:shadow-md flex items-center overflow-hidden transition-all duration-500 ease-in-out px-4 sm:px-6"
       :class="isScrolled ? 'h-14 border-b-2' : 'h-16 sm:h-20 border-b-4'"
     >
       <div class="max-w-7xl mx-auto w-full flex items-center relative h-full z-10">
-        <h1 
-          class="text-white font-black tracking-widest uppercase drop-shadow-sm absolute transition-all duration-500 ease-in-out whitespace-nowrap"
-          :class="isScrolled ? 'left-0 translate-x-0 text-base sm:text-xl' : 'left-1/2 -translate-x-1/2 text-xl sm:text-3xl'"
+        
+        <div 
+          class="absolute transition-all duration-500 ease-in-out whitespace-nowrap flex items-center z-10"
+          :class="isScrolled ? 'left-0 translate-x-0 gap-2' : 'left-1/2 -translate-x-1/2 gap-0'"
         >
-          PokéBase
-        </h1>
+          <!-- shrinking pokeball icon -->
+          <div 
+            class="relative rounded-full border-2 border-gray-900 overflow-hidden bg-white transition-all duration-500 shrink-0"
+            :class="isScrolled ? 'w-5 h-5 sm:w-7 sm:h-7 opacity-100 scale-100' : 'w-0 h-0 opacity-0 scale-50 border-0'"
+          >
+            <div class="absolute top-0 left-0 right-0 h-1/2 bg-red-500 border-b-2 border-gray-900"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white border-2 border-gray-900 rounded-full z-10"></div>
+          </div>
+
+          <h1 
+            class="font-black tracking-tight drop-shadow-sm transition-all duration-500 ease-in-out flex items-center"
+            :class="isScrolled ? 'text-base sm:text-xl' : 'text-xl sm:text-3xl'"
+          >
+            <span class="text-red-500 dark:text-red-500">Poké</span><span class="text-gray-900 dark:text-white transition-colors duration-500">Base</span>
+          </h1>
+        </div>
 
         <div class="ml-auto flex items-center gap-1.5 sm:gap-3">
           
@@ -24,11 +39,11 @@
               v-model="searchQuery" 
               type="text" 
               placeholder="Search..." 
-              class="w-20 sm:w-28 md:w-44 bg-red-600 dark:bg-gray-800 text-white placeholder-red-300 dark:placeholder-gray-500 font-medium border border-red-500 dark:border-gray-700 p-1.5 sm:p-2 pl-2 sm:pl-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 text-[10px] sm:text-xs md:text-sm transition-colors"
+              class="w-20 sm:w-28 md:w-44 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 font-medium border border-gray-200 dark:border-gray-700 p-1.5 sm:p-2 pl-2 sm:pl-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400/40 text-[10px] sm:text-xs md:text-sm transition-colors"
             />
             <select 
               v-model="sortBy" 
-              class="w-16 sm:w-auto bg-red-600 dark:bg-gray-800 text-white font-medium border border-red-500 dark:border-gray-700 p-1.5 sm:p-2 px-1 sm:px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer text-[10px] sm:text-xs md:text-sm transition-colors truncate"
+              class="w-16 sm:w-auto bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-medium border border-gray-200 dark:border-gray-700 p-1.5 sm:p-2 px-1 sm:px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400/40 cursor-pointer text-[10px] sm:text-xs md:text-sm transition-colors truncate"
             >
               <option value="id-asc">Lowest ID</option>
               <option value="id-desc">Highest ID</option>
@@ -40,7 +55,7 @@
           <button 
             @click.prevent="toggleDark" 
             type="button"
-            class="relative z-50 p-1.5 sm:p-2 rounded-full hover:bg-black/20 dark:hover:bg-white/20 transition-colors text-white flex-shrink-0 cursor-pointer pointer-events-auto"
+            class="relative z-50 p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/20 transition-colors text-gray-600 dark:text-gray-300 flex-shrink-0 cursor-pointer pointer-events-auto"
           >
             <Icon v-if="isDark" name="mdi:weather-night" class="text-lg sm:text-xl" />
             <Icon v-else name="mdi:weather-sunny" class="text-lg sm:text-xl" />
@@ -48,7 +63,7 @@
 
           <div 
             class="bg-white dark:bg-gray-800 rounded-full shadow-inner transition-all duration-500 ease-in-out flex-shrink-0 overflow-hidden"
-            :class="isScrolled ? 'opacity-0 scale-50 w-0 h-0 border-0 ml-0' : 'opacity-100 scale-100 w-5 h-5 sm:w-8 sm:h-8 border-[2px] sm:border-[4px] border-red-900 dark:border-gray-700 ml-1'"
+            :class="isScrolled ? 'opacity-0 scale-50 w-0 h-0 border-0 ml-0' : 'opacity-100 scale-100 w-5 h-5 sm:w-8 sm:h-8 border-[2px] sm:border-[4px] border-gray-200 dark:border-gray-700 ml-1'"
           ></div>
 
         </div>
@@ -175,7 +190,7 @@
       <span class="font-bold text-lg sm:text-xl">&uarr;</span>
     </button>
 
-    <footer class="bg-gray-900 dark:bg-black border-gray-800 dark:border-gray-900 border-t-4 py-8 sm:py-12 text-center mt-auto relative overflow-hidden transition-colors duration-500">
+    <footer class="bg-white dark:bg-gray-900 border-red-500 dark:border-red-600 border-t-4 py-8 sm:py-12 text-center mt-auto relative overflow-hidden transition-colors duration-500">
       <div class="absolute inset-0 pointer-events-none overflow-hidden">
         <div v-for="i in 6" :key="i"
           class="absolute bottom-0 opacity-5 dark:opacity-10 animate-rise"
@@ -185,18 +200,32 @@
             animationDuration: `${4 + (i % 3)}s`
           }"
         >
-          <svg :width="20 + (i * 8)" :height="20 + (i * 8)" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+          <svg :width="20 + (i * 8)" :height="20 + (i * 8)" viewBox="0 0 24 24" fill="none" stroke="currentColor" :class="isDark ? 'text-white' : 'text-gray-900'" stroke-width="1.5">
             <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M2 12h7m6 0h7"/>
           </svg>
         </div>
       </div>
 
       <div class="max-w-7xl mx-auto flex flex-col items-center relative z-10 gap-2 sm:gap-3">
-        <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white dark:bg-gray-800 border-[3px] sm:border-[4px] border-gray-600 dark:border-gray-700 rounded-full animate-pulse shadow-[0_0_20px_rgba(255,255,255,0.2)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
-        <p class="text-gray-400 font-bold tracking-widest text-[10px] sm:text-xs uppercase">
+        <!-- spinning pokeball -->
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[3px] border-gray-800 overflow-hidden bg-white relative animate-spin mb-1">
+          <div class="absolute top-0 left-0 right-0 h-1/2 bg-red-500 border-b-[3px] border-gray-800"></div>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-white border-[2.5px] sm:border-[3px] border-gray-800 rounded-full z-10"></div>
+        </div>
+        
+        <p class="text-gray-600 dark:text-gray-400 font-black tracking-widest text-[11px] sm:text-xs uppercase">
           PokéBase &copy; {{ new Date().getFullYear() }}
         </p>
-        <p class="text-gray-600 dark:text-gray-500 text-[10px] sm:text-xs">Data from PokéAPI · Images from Pokémon</p>
+
+        <p class="text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs font-medium">
+          Made by <a href="https://github.com/rjaks" target="_blank" class="text-red-500 dark:text-red-400 hover:underline">Rjaks</a>
+        </p>
+
+        <div class="flex gap-3 text-gray-500 dark:text-gray-500 text-[10px] sm:text-xs mb-1">
+          <a href="https://github.com/rjaks/pokebase" target="_blank" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">View the Repository</a>
+        </div>
+
+        <p class="text-gray-400 dark:text-gray-600 text-[9px] sm:text-[10px]">Data from PokéAPI · Images from Pokémon</p>
       </div>
     </footer>
   </div>
@@ -206,7 +235,9 @@
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { usePokemon } from '~/composables/getPokemon'
 import { usePokemonStore } from '~/stores/pokemon'
+import { useTheme } from '~/composables/useTheme'
 
+const { isDark, toggleDark, initTheme } = useTheme()
 const { formatId, getImageUrl } = usePokemon()
 
 const searchQuery = ref('')
@@ -219,18 +250,6 @@ let slideInterval
 
 const isScrolled = ref(false)
 const showToTop = ref(false)
-const isDark = ref(false)
-
-const toggleDark = () => {
-  isDark.value = !isDark.value
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
-}
 
 const checkScroll = () => {
   isScrolled.value = window.scrollY > 300
@@ -242,16 +261,16 @@ const scrollToTop = () => {
 }
 
 const handleLoadMore = async () => {
+  const prevLength = store.pokemonList.length
   await store.fetchPokemons()
-  
   await nextTick()
-  
-  setTimeout(() => {
-    window.scrollBy({ top: 400, behavior: 'smooth' })
-  }, 50)
+  if (store.pokemonList.length > prevLength) {
+    setTimeout(() => window.scrollBy({ top: 400, behavior: 'smooth' }), 50)
+  }
 }
 
 onMounted(() => {
+  initTheme()
   if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     isDark.value = true
     document.documentElement.classList.add('dark')
@@ -368,8 +387,8 @@ const displayList = computed(() => {
   background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
   background-size: 28px 28px;
 }
-:global(.dark) .page-bg-dots {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+:global(html.dark .page-bg-dots) {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px);
 }
 
 @keyframes float-slow {
