@@ -1,11 +1,27 @@
-# Nuxt Minimal Starter
+# PokéBase
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A minimal, fast, and responsive Pokédex built with Nuxt 3 and Tailwind CSS. All data is fetched from the PokéAPI.
 
-## Setup
+## Features
 
-Make sure to install dependencies:
+*   **Complete Database**: Browse over 1,000 Pokémon with infinite scrolling.
+*   **Detailed Views**: View stats, types, weaknesses, abilities, and evolution chains.
+*   **Search & Sort**: Quickly find Pokémon by name or ID.
+*   **Dark Mode**: Full light and dark theme support.
+*   **Responsive Design**: Optimized for both mobile and desktop screens.
+*   **Smooth Animations**: Skeleton loaders and fluid page transitions.
 
+## Tech Stack
+
+*   Framework: Nuxt 3 (Vue 3)
+*   Styling: Tailwind CSS
+*   Icons: Nuxt Icon
+*   API: PokéAPI
+*   Deployment: Vercel
+
+## Local Setup
+
+Make sure to install the dependencies:
 ```bash
 # npm
 npm install
@@ -15,15 +31,9 @@ pnpm install
 
 # yarn
 yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
 Start the development server on `http://localhost:3000`:
-
 ```bash
 # npm
 npm run dev
@@ -33,15 +43,11 @@ pnpm dev
 
 # yarn
 yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
 
 Build the application for production:
-
 ```bash
 # npm
 npm run build
@@ -51,13 +57,9 @@ pnpm build
 
 # yarn
 yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
-
+Locally preview the production build: 
 ```bash
 # npm
 npm run preview
@@ -67,9 +69,4 @@ pnpm preview
 
 # yarn
 yarn preview
-
-# bun
-bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
