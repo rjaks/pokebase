@@ -1,99 +1,161 @@
 <template>
   <div 
-    class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500 ease-in-out"
-    :class="isOverlayVisible ? 'opacity-100 bg-gray-50' : 'opacity-0 pointer-events-none'"
+    class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500 ease-in-out bg-gray-50"
+    :class="isOverlayVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'"
   >
     <!-- INITIAL LOAD -->
-    <div v-if="isInitial" class="relative flex items-center justify-center w-full h-full">
+    <div v-if="isInitial" class="flex flex-col items-center gap-6">
       
-      <!-- Pokedex Title na lalabas pag nahati yung Pokeball -->
-      <h1 
-        class="absolute text-5xl md:text-7xl font-black text-gray-800 tracking-widest uppercase transition-all duration-700 z-0"
-        :class="startSplit ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
-      >
-        Pokédex
-      </h1>
-
-      <!-- The Splitting Pokeball Container -->
-      <div 
-        class="relative w-40 h-40 transition-all duration-500 z-10"
-        :class="isSpinning ? 'animate-spin' : '-rotate-45'"
-      >
-        <!-- Top Half (Red) -->
-        <div 
-          class="absolute top-0 w-full h-1/2 bg-red-500 rounded-t-full border-[8px] border-b-[4px] border-gray-800 transition-all duration-700 ease-in-out"
-          :class="startSplit ? '-translate-y-32 opacity-0' : 'translate-y-0 opacity-100'"
-        ></div>
+      <!-- Orbit Container -->
+      <div class="relative w-44 h-44 flex items-center justify-center">
         
-        <!-- Bottom Half (White) -->
-        <div 
-          class="absolute bottom-0 w-full h-1/2 bg-white rounded-b-full border-[8px] border-t-[4px] border-gray-800 transition-all duration-700 ease-in-out"
-          :class="startSplit ? 'translate-y-32 opacity-0' : 'translate-y-0 opacity-100'"
-        ></div>
+        <!-- Orbiting type badges -->
+        <div class="absolute inset-0 animate-spin-slow">
+          <div
+            v-for="(type, index) in orbitTypes"
+            :key="type.name"
+            class="absolute w-9 h-9 rounded-xl flex items-center justify-center shadow-md text-white"
+            :style="{
+              backgroundColor: type.color,
+              top: `${50 - 47 * Math.cos((2 * Math.PI * index) / orbitTypes.length)}%`,
+              left: `${50 + 47 * Math.sin((2 * Math.PI * index) / orbitTypes.length)}%`,
+              transform: 'translate(-50%, -50%)'
+            }"
+          >
+            <!-- counter-rotate so icons stay upright -->
+            <div class="animate-spin-reverse">
+              <Icon :name="type.icon" class="text-base" />
+            </div>
+          </div>
+        </div>
 
-        <!-- Center Button -->
-        <div 
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white border-[8px] border-gray-800 rounded-full transition-opacity duration-300"
-          :class="startSplit ? 'opacity-0' : 'opacity-100'"
-        ></div>
+        <!-- Pokeball Center -->
+        <div class="relative w-14 h-14 rounded-full border-4 border-gray-800 overflow-hidden bg-white z-10 animate-pb-pulse">
+          <div class="absolute top-0 left-0 right-0 h-1/2 bg-red-500 border-b-4 border-gray-800"></div>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-[3px] border-gray-800 rounded-full z-10"></div>
+        </div>
+
+      </div>
+
+      <!-- Witty rotating text -->
+      <div class="flex flex-col items-center gap-2">
+        <p 
+          class="text-xs font-bold tracking-widest uppercase text-gray-400 transition-opacity duration-300"
+          :class="textVisible ? 'opacity-100' : 'opacity-0'"
+        >
+          {{ currentLine }}
+        </p>
+        <div class="flex gap-1.5">
+          <div v-for="i in 3" :key="i" 
+            class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce-dot"
+            :style="{ animationDelay: `${(i - 1) * 0.2}s` }"
+          ></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NAVIGATION LOAD -->
+    <div v-else class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 rounded-full border-4 border-gray-800 overflow-hidden bg-white relative animate-spin">
+        <div class="absolute top-0 left-0 right-0 h-1/2 bg-red-500 border-b-4 border-gray-800"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white border-[3px] border-gray-800 rounded-full z-10"></div>
       </div>
     </div>
 
-    <!-- NAVIGATION LOAD (Normal) -->
-    <div v-else class="flex flex-col items-center">
-      <div class="w-24 h-24 rounded-full border-[8px] border-gray-800 bg-white relative overflow-hidden flex items-center justify-center shadow-lg animate-spin">
-         <div class="absolute top-0 w-full h-1/2 bg-red-500 border-b-[8px] border-gray-800"></div>
-         <div class="w-6 h-6 bg-white border-[4px] border-gray-800 rounded-full z-10"></div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-const nuxtApp = useNuxtApp()
+import { getTypeIcon } from '~/utils/typeIcons'
+import { getTypeHex } from '~/utils/typeColors'
 
+const nuxtApp = useNuxtApp()
 const isOverlayVisible = ref(true)
 const isInitial = ref(true)
+const textVisible = ref(true)
 
-const isSpinning = ref(true)
-const startSplit = ref(false)
+const wittyLines = [
+  'Catching them all...',
+  'Consulting Professor Oak...',
+  'Avoiding wild encounters...',
+  'Healing at the Pokécenter...',
+  'Waking up Snorlax...',
+  'Checking the Pokédex...',
+  'Almost there, trainer...',
+]
+
+const currentLine = ref(wittyLines[0])
+let lineIndex = 0
+let textInterval
+
+const orbitTypes = [
+  'fire', 'water', 'grass', 'electric',
+  'psychic', 'ghost', 'fairy', 'dragon'
+].map(name => ({
+  name,
+  icon: getTypeIcon(name),
+  color: getTypeHex(name)
+}))
+
+const cycleText = () => {
+  textInterval = setInterval(() => {
+    textVisible.value = false
+    setTimeout(() => {
+      lineIndex = (lineIndex + 1) % wittyLines.length
+      currentLine.value = wittyLines[lineIndex]
+      textVisible.value = true
+    }, 300)
+  }, 2200)
+}
 
 onMounted(() => {
+  cycleText()
+
   setTimeout(() => {
-    isSpinning.value = false 
-    
+    isOverlayVisible.value = false
+    clearInterval(textInterval)
     setTimeout(() => {
-      startSplit.value = true 
-      
-      setTimeout(() => {
-        isOverlayVisible.value = false 
-        
-        setTimeout(() => {
-          isInitial.value = false 
-        }, 500)
-        
-      }, 1000) 
-      
-    }, 400) 
-    
-  }, 1000) 
+      isInitial.value = false
+    }, 500)
+  }, 3000)
 })
 
 nuxtApp.hook('page:start', () => {
-  // wag i-trigger kung initial load
   if (isInitial.value) return
   isOverlayVisible.value = true
 })
 
 nuxtApp.hook('page:finish', () => {
   window.scrollTo(0, 0)
-  
-  // eto yung fix: wag i-hide agad kung nagp-play pa yung initial animation
-  if (isInitial.value) return 
-
+  if (isInitial.value) return
   setTimeout(() => {
     isOverlayVisible.value = false
   }, 300)
 })
 </script>
+
+<style scoped>
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes pb-pulse {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+}
+@keyframes bounce-dot {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+
+.animate-spin-slow { animation: spin-slow 5s linear infinite; }
+.animate-spin-reverse { animation: spin-reverse 5s linear infinite; }
+.animate-pb-pulse { animation: pb-pulse 1.5s ease-in-out infinite; }
+.animate-bounce-dot { animation: bounce-dot 1.2s ease-in-out infinite; }
+</style>

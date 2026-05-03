@@ -1,8 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col relative">
+    <!-- Subtle animated dot grid background -->
+    <div class="fixed inset-0 z-0 pointer-events-none page-bg-dots"></div>
     
     <header 
-      class="bg-red-500 border-gray-800 sticky top-0 z-50 shadow-md flex items-center overflow-hidden transition-all duration-500 ease-in-out px-6"
+      class="bg-red-700 border-gray-900 sticky top-0 z-50 shadow-md flex items-center overflow-hidden transition-all duration-500 ease-in-out px-6"
       :class="isScrolled ? 'h-14 border-b-2' : 'h-20 border-b-4'"
     >
       <div class="max-w-7xl mx-auto w-full flex items-center relative h-full z-10">
@@ -10,22 +12,22 @@
           class="text-white font-black tracking-widest uppercase drop-shadow-sm absolute transition-all duration-500 ease-in-out whitespace-nowrap"
           :class="isScrolled ? 'left-0 translate-x-0 text-lg sm:text-xl' : 'left-1/2 -translate-x-1/2 text-xl sm:text-3xl'"
         >
-          Pokédex
+          PokéBase
         </h1>
 
         <div 
-          class="ml-auto flex justify-end items-center gap-2 sm:gap-4 transition-all duration-500 ease-in-out absolute right-0"
+          class="ml-auto flex justify-end items-center gap-2 sm:gap-3 transition-all duration-500 ease-in-out absolute right-0"
           :class="isScrolled ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-10 pointer-events-none'"
         >
           <input 
             v-model="searchQuery" 
             type="text" 
             placeholder="Search..." 
-            class="w-28 sm:w-48 lg:w-64 bg-white text-gray-800 font-medium border-none p-1.5 sm:p-2 pl-4 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 shadow-inner text-xs sm:text-sm"
+            class="w-28 sm:w-44 bg-red-600 text-white placeholder-red-300 font-medium border border-red-500 p-2 pl-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 text-xs sm:text-sm"
           />
           <select 
             v-model="sortBy" 
-            class="w-auto bg-white font-medium text-gray-700 border-none p-1.5 sm:p-2 sm:px-3 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 cursor-pointer shadow-inner text-xs sm:text-sm"
+            class="bg-red-600 text-white font-medium border border-red-500 p-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer text-xs sm:text-sm"
           >
             <option value="id-asc">Lowest ID</option>
             <option value="id-desc">Highest ID</option>
@@ -35,7 +37,7 @@
         </div>
 
         <div 
-          class="w-6 h-6 sm:w-8 sm:h-8 bg-white border-[3px] sm:border-[4px] border-gray-800 rounded-full shadow-inner absolute right-0 transition-all duration-500 ease-in-out"
+          class="w-6 h-6 sm:w-8 sm:h-8 bg-white border-[3px] sm:border-[4px] border-red-900 rounded-full shadow-inner absolute right-0 transition-all duration-500 ease-in-out"
           :class="isScrolled ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'"
         ></div>
       </div>
@@ -44,19 +46,48 @@
     <main class="flex-grow max-w-7xl mx-auto w-full p-6 lg:py-10 relative z-10">
       
       <div class="bg-white rounded-3xl p-8 sm:p-12 mb-12 border-2 border-gray-100 shadow-sm flex flex-col-reverse md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+        
+        <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+          <!-- Blobs -->
+          <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-red-100 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-blob"></div>
+          <div class="absolute top-[20%] right-[-10%] w-72 h-72 bg-yellow-100 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-blob animation-delay-2000"></div>
+          <div class="absolute bottom-[-20%] left-[20%] w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-blob animation-delay-4000"></div>
+
+          <!-- Floating type badge orbs -->
+          <div class="absolute top-4 left-[15%] w-8 h-8 rounded-full bg-red-400 opacity-20 animate-float-slow"></div>
+          <div class="absolute top-10 right-[20%] w-5 h-5 rounded-full bg-blue-400 opacity-20 animate-float-medium"></div>
+          <div class="absolute bottom-6 left-[40%] w-6 h-6 rounded-full bg-yellow-400 opacity-20 animate-float-fast"></div>
+          <div class="absolute bottom-4 right-[35%] w-4 h-4 rounded-full bg-green-400 opacity-20 animate-float-slow animation-delay-2000"></div>
+          <div class="absolute top-1/2 left-[5%] w-3 h-3 rounded-full bg-purple-400 opacity-20 animate-float-medium animation-delay-4000"></div>
+
+          <!-- Drifting pokeball outlines -->
+          <svg class="absolute bottom-0 right-[10%] w-24 h-24 opacity-5 animate-drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M2 12h7m6 0h7"/>
+          </svg>
+          <svg class="absolute top-0 left-[30%] w-16 h-16 opacity-5 animate-drift animation-delay-2000" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M2 12h7m6 0h7"/>
+          </svg>
+          <svg class="absolute top-[30%] right-[5%] w-10 h-10 opacity-5 animate-drift animation-delay-4000" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M2 12h7m6 0h7"/>
+          </svg>
+        </div>
+
         <div class="relative z-10 text-center md:text-left">
-          <h2 class="text-4xl sm:text-5xl font-black text-gray-800 mb-4 tracking-tight">
-            Discover them all.
+          <p class="text-xs font-bold tracking-widest uppercase text-red-400 mb-3">
+            Your Pokédex. Refined.
+          </p>
+          <h2 class="text-4xl sm:text-5xl font-black text-gray-800 mb-4 tracking-tight leading-tight">
+            Every Pokémon.<br/>
+            <span class="text-red-600">One base.</span>
           </h2>
-          <p class="text-lg text-gray-500 font-medium max-w-lg mx-auto md:mx-0">
-            Search, sort, and learn about your favorite companions in this sleek and minimal encyclopedia.
+          <p class="text-base text-gray-400 font-medium max-w-md mx-auto md:mx-0 leading-relaxed">
+            Browse over 1,000 Pokémon, explore their stats, types, weaknesses, and evolution chains — all in a clean, minimal experience built for trainers.
           </p>
         </div>
         
         <!-- Animated Intro Section with Glow -->
         <div class="relative w-56 h-56 sm:w-80 sm:h-80 flex-shrink-0 scale-110 lg:scale-125 z-10 flex items-center justify-center">
           
-          <!-- Glowing Orbs Background -->
           <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div class="absolute w-40 h-40 sm:w-60 sm:h-60 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
             <div class="absolute w-40 h-40 sm:w-60 sm:h-60 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-2000 translate-x-10"></div>
@@ -74,7 +105,6 @@
           </transition-group>
         </div>
 
-        <div class="absolute -right-20 -top-20 w-96 h-96 bg-gray-50 rounded-full opacity-80 z-0"></div>
       </div>
 
       <div 
@@ -101,21 +131,6 @@
         </select>
       </div>
 
-      <!-- Top Load More Button (Shows when reversed) -->
-      <div v-if="isReversedSort" class="mb-8 flex justify-center pt-4">
-        <button 
-          @click="handleLoadMore" 
-          :disabled="store.isLoading || !store.hasMore"
-          class="flex items-center justify-center gap-3 w-56 h-12 bg-gray-800 text-white font-bold rounded-xl shadow-lg hover:bg-gray-700 hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 transition-all duration-300"
-        >
-          <div v-if="store.isLoading" class="w-5 h-5 rounded-full border-[2px] border-white relative overflow-hidden animate-spin">
-             <div class="absolute top-0 w-full h-1/2 bg-red-500 border-b-[2px] border-white"></div>
-             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-white border-[1.5px] border-white rounded-full z-10"></div>
-          </div>
-          <span v-else>Load More Pokemon</span>
-        </button>
-      </div>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 -mt-4">
         <PokemonCard
           v-for="(poke, index) in displayList"
@@ -130,8 +145,8 @@
         />
       </div>
 
-      <!-- Bottom Load More Button (Shows when normal sort) -->
-      <div v-if="!isReversedSort" class="mt-12 flex justify-center pb-8">
+      <!-- Bottom Load More Button -->
+      <div class="mt-12 flex justify-center pb-8">
         <button 
           @click="handleLoadMore" 
           :disabled="store.isLoading || !store.hasMore"
@@ -155,20 +170,37 @@
       <span class="font-bold text-xl">&uarr;</span>
     </button>
 
-    <footer class="bg-gray-900 border-gray-800 border-t-4 py-8 text-center mt-auto">
-      <div class="max-w-7xl mx-auto flex flex-col items-center">
-        <div class="w-8 h-8 bg-white border-[4px] border-gray-800 rounded-full mb-4 opacity-50"></div>
+    <footer class="bg-gray-900 border-gray-800 border-t-4 py-12 text-center mt-auto relative overflow-hidden">
+  
+      <!-- Animated rising pokeballs -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div v-for="i in 6" :key="i"
+          class="absolute bottom-0 opacity-5 animate-rise"
+          :style="{
+            left: `${10 + (i - 1) * 16}%`,
+            animationDelay: `${(i - 1) * 0.8}s`,
+            animationDuration: `${4 + (i % 3)}s`
+          }"
+        >
+          <svg :width="20 + (i * 8)" :height="20 + (i * 8)" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M2 12h7m6 0h7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto flex flex-col items-center relative z-10 gap-3">
+        <div class="w-8 h-8 bg-white border-[4px] border-gray-600 rounded-full animate-pulse shadow-[0_0_20px_rgba(255,255,255,0.2)]"></div>
         <p class="text-gray-400 font-bold tracking-widest text-xs uppercase">
-          Pokébase &copy; {{ new Date().getFullYear() }}
+          PokéBase &copy; {{ new Date().getFullYear() }}
         </p>
+        <p class="text-gray-600 text-xs">Data from PokéAPI · Images from Pokémon</p>
       </div>
     </footer>
-
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { usePokemon } from '~/composables/getPokemon'
 import { usePokemonStore } from '~/stores/pokemon'
 
@@ -185,10 +217,6 @@ let slideInterval
 const isScrolled = ref(false)
 const showToTop = ref(false)
 
-// Check kung descending ang sort
-const isReversedSort = computed(() => {
-  return ['id-desc', 'name-desc'].includes(sortBy.value)
-})
 
 const checkScroll = () => {
   isScrolled.value = window.scrollY > 300
@@ -202,12 +230,12 @@ const scrollToTop = () => {
 const handleLoadMore = async () => {
   await store.fetchPokemons()
   
+  // wait for data to render in DOM
+  await nextTick()
+  
   setTimeout(() => {
-    // kung nakabaligtad yung list, wag mag-scroll pababa
-    if (!isReversedSort.value) {
       window.scrollBy({ top: 400, behavior: 'smooth' })
-    }
-  }, 100)
+  }, 50)
 }
 
 onMounted(() => {
@@ -253,6 +281,38 @@ const displayList = computed(() => {
 </script>
 
 <style scoped>
+/* Floating Blob Animations */
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Footer Scrolling Pattern */
+.footer-pattern {
+  background-image: radial-gradient(circle, #9ca3af 2px, transparent 2px);
+  background-size: 32px 32px;
+  animation: slide-bg 20s linear infinite;
+}
+
+@keyframes slide-bg {
+  0% { background-position: 0 0; }
+  100% { background-position: 64px 64px; }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-15px); }
@@ -272,7 +332,6 @@ const displayList = computed(() => {
   animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* slide-fade animation para sa intro slideshow */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -286,7 +345,38 @@ const displayList = computed(() => {
   transform: translateX(-30px) scale(0.9);
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+/* Page background dot grid */
+.page-bg-dots {
+  background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+  background-size: 28px 28px;
 }
+
+/* Float animations for orbs */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-18px); }
+}
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes float-fast {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes drift {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(15deg); }
+}
+@keyframes rise {
+  0% { transform: translateY(0px); opacity: 0.05; }
+  50% { opacity: 0.08; }
+  100% { transform: translateY(-120px); opacity: 0; }
+}
+
+.animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
+.animate-float-medium { animation: float-medium 3.5s ease-in-out infinite; }
+.animate-float-fast { animation: float-fast 2.5s ease-in-out infinite; }
+.animate-drift { animation: drift 6s ease-in-out infinite; }
+.animate-rise { animation: rise 4s ease-in-out infinite; }
 </style>

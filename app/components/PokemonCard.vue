@@ -1,5 +1,10 @@
 <template>
-  <NuxtLink :to="`/pokemon/${rawId}`" class="group block h-full">
+  <NuxtLink 
+    :to="`/pokemon/${rawId}`" 
+    class="group block h-full transition-all duration-700 ease-out"
+    :class="isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'"
+    ref="cardRef"
+  >
     <div 
       class="relative bg-white rounded-2xl p-5 h-full flex flex-col items-center transition-all duration-300 transform group-hover:-translate-y-2 border-2 shadow-md overflow-hidden"
       :style="{ 
@@ -23,7 +28,7 @@
         </span>
       </div>
 
-      <div class="relative z-10 w-full h-40 mb-3 idle-float flex items-center justify-center">
+      <div class="relative z-10 w-full h-40 mb-3 flex items-center justify-center">
         <Icon v-if="!isLoaded" name="mdi:loading" class="absolute text-3xl text-gray-300 animate-spin" />
         
         <img 
@@ -40,7 +45,6 @@
           #{{ String(id).padStart(3, '0') }}
         </span>
         
-        <!-- text and hover underline gamit yung darkened color -->
         <h2 
           class="relative inline-block text-xl font-bold capitalize transition-colors duration-300"
           :style="{ color: darkColor }"
@@ -52,7 +56,6 @@
           ></span>
         </h2>
 
-        <!-- hover text gamit darkened color -->
         <span 
           class="text-[10px] font-bold mt-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           :style="{ color: darkColor }"
@@ -66,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { getTypeHex } from '~/utils/typeColors'
 import { getTypeIcon } from '~/utils/typeIcons'
 
@@ -79,12 +82,31 @@ const props = defineProps({
 })
 
 const isLoaded = ref(false)
+const cardRef = ref(null)
+const isVisible = ref(false)
+let observer
+
+onMounted(() => {
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isVisible.value = entry.isIntersecting
+    })
+  }, { threshold: 0.1 }) // mag-t-trigger pag 10% na ng card ang visible
+
+  if (cardRef.value) {
+    // kailangan ng $el kasi component yung NuxtLink
+    observer.observe(cardRef.value.$el || cardRef.value)
+  }
+})
+
+onUnmounted(() => {
+  if (observer) observer.disconnect()
+})
 
 const mainColor = computed(() => {
   return props.types && props.types.length ? getTypeHex(props.types[0]) : '#e5e7eb'
 })
 
-// function para i-darken yung hex color
 const darkColor = computed(() => {
   let hex = mainColor.value.replace('#', '')
   if (hex.length === 3) hex = hex.split('').map(c => c + c).join('')
@@ -93,7 +115,6 @@ const darkColor = computed(() => {
   let g = parseInt(hex.substring(2, 4), 16)
   let b = parseInt(hex.substring(4, 6), 16)
   
-  // darken by 35%
   r = Math.floor(r * 0.65)
   g = Math.floor(g * 0.65)
   b = Math.floor(b * 0.65)
@@ -122,14 +143,5 @@ const darkColor = computed(() => {
 @keyframes slide-bg {
   0% { mask-position: 0 0; -webkit-mask-position: 0 0; }
   100% { mask-position: 40px 40px; -webkit-mask-position: 40px 40px; }
-}
-
-@keyframes idle-breathe {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-.idle-float {
-  animation: idle-breathe 4s ease-in-out infinite;
 }
 </style>
