@@ -430,6 +430,20 @@ const evolutions = computed(() => {
   })
   return unique
 })
+
+const pageTitle = computed(() => {
+  if (!pokemon.value) return 'PokéBase'
+  const capitalized = pokemon.value.name.charAt(0).toUpperCase() + pokemon.value.name.slice(1)
+  return `${capitalized} - PokéBase`
+})
+
+useSeoMeta({
+  title: pageTitle,
+  ogTitle: pageTitle,
+  description: () => description.value || 'View Pokémon stats, types, weaknesses, and evolutions on PokéBase.',
+  ogDescription: () => description.value || 'View Pokémon stats, types, weaknesses, and evolutions on PokéBase.',
+  ogImage: () => getImageUrl(currentId.value)
+})
 </script>
 
 <style scoped>
